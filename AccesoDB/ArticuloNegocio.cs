@@ -31,10 +31,10 @@ namespace AccesoDB
                     }
                     aux.Precio = (decimal)datos.Lector["Precio"];
                     aux.Marca = new Marca();
-                    aux.Marca.Id = (int)datos.Lector["Id"];
+                    aux.Marca.Id = (int)datos.Lector["IdMarca"];
                     aux.Marca.Descripcion = (string)datos.Lector["Marca"];
                     aux.Categoria = new Categoria();
-                    aux.Categoria.Id = (int)datos.Lector["Id"];
+                    aux.Categoria.Id = (int)datos.Lector["IdCategoria"];
                     aux.Categoria.Descripcion = (string)datos.Lector["Categoria"];
 
                     lista.Add(aux);
@@ -49,6 +49,91 @@ namespace AccesoDB
             finally
             {
                 datos.cerrarConexion();
+            }
+        }
+
+        public void agregar(Articulo Nuevo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("insert into articulos (Codigo, Nombre, Descripcion, IdMarca, IdCategoria, ImagenUrl, Precio) values (@codigo, @nombre, @descripcion, @idMarca, @idCategoria, @ImagenUrl, @precio)");
+                datos.setearParametros("@codigo", Nuevo.Codigo);
+                datos.setearParametros("@nombre", Nuevo.Nombre);
+                datos.setearParametros("@descripcion", Nuevo.Descripcion);
+                datos.setearParametros("@idMarca", Nuevo.Marca.Id);
+                datos.setearParametros("@idCategoria", Nuevo.Categoria.Id);
+                datos.setearParametros("@ImagenUrl", Nuevo.UrlImagen);
+                datos.setearParametros("@precio", Nuevo.Precio);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public void modificar(Articulo art)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("update ARTICULOS set Codigo = @codigo, Nombre = @nombre, Descripcion = @descripcion, IdMarca = @idMarca, IdCategoria = @idCategoria, ImagenUrl = @ImagenUrl, Precio = @precio where Id = @Id");
+                datos.setearParametros("@codigo", art.Codigo);
+                datos.setearParametros("@nombre", art.Nombre);
+                datos.setearParametros("@descripcion", art.Descripcion);
+                datos.setearParametros("@idMarca", art.Marca.Id);
+                datos.setearParametros("@idCategoria", art.Categoria.Id);
+                datos.setearParametros("@ImagenUrl", art.UrlImagen);
+                datos.setearParametros("@precio", art.Precio);
+                datos.setearParametros("@Id", art.Id);
+
+                datos.ejecutarAccion();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        public void eliminar(int Id)
+        {
+            try
+            {
+                AccesoDatos datos = new AccesoDatos();
+                datos.setearConsulta("");
+                datos.setearParametros("@Id", Id);
+                datos.ejecutarAccion();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public void eliminarLogico(int Id)
+        {
+            try
+            {
+                AccesoDatos datos = new AccesoDatos();
+                datos.setearConsulta("");
+                datos.setearParametros("@Id", Id);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
     }

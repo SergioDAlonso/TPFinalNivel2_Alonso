@@ -203,6 +203,7 @@
             this.bttImagenLocal.TabIndex = 16;
             this.bttImagenLocal.Text = "+";
             this.bttImagenLocal.UseVisualStyleBackColor = true;
+            this.bttImagenLocal.Click += new System.EventHandler(this.bttImagenLocal_Click);
             // 
             // bttAceptar
             // 

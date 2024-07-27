@@ -110,7 +110,7 @@ namespace AccesoDB
             try
             {
                 AccesoDatos datos = new AccesoDatos();
-                datos.setearConsulta("");
+                datos.setearConsulta("delete from ARTICULOS where Id = @Id");
                 datos.setearParametros("@Id", Id);
                 datos.ejecutarAccion();
 
@@ -126,9 +126,103 @@ namespace AccesoDB
             try
             {
                 AccesoDatos datos = new AccesoDatos();
-                datos.setearConsulta("");
+                // Como la DB no tiene parametro "Activo" , le cambio el valor de 
+                // IdCategoria para que no me lo muestre en dgvArticulos.
+                datos.setearConsulta("update ARTICULOS set IdCategoria = 0 where Id = @Id");
                 datos.setearParametros("@Id", Id);
                 datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public List<Articulo> filtrar(string campo, string criterio, string filtro)
+        {
+            List<Articulo> lista = new List<Articulo>();
+            AccesoDatos datos = new AccesoDatos();
+            
+            try
+            {
+                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion Descripcion, ImagenUrl, Precio, M.Descripcion Marca, C.Descripcion Categoria, A.IdMarca, A.IdCategoria from ARTICULOS A, MARCAS M, CATEGORIAS C where M.Id = IdMarca AND C.Id = IdCategoria AND ";
+                switch (campo)
+                {
+                    case "Precio":
+                        {
+                            switch (criterio)
+                            {
+                                case "Mayor a":
+                                    consulta += "Precio > " + filtro;
+                                    break;
+                                case "Menor a":
+                                    consulta += "Precio < " + filtro;
+                                    break;
+                                case "Igual a":
+                                    consulta += "Precio = " + filtro;
+                                    break; ;
+                            }
+                            break;
+                        }
+                    case "Marca":
+                        {
+                            switch (criterio)
+                            {
+                                case "Empieza con":
+                                    consulta += "Marca like '" + filtro + "%'";
+                                    break;
+                                case "Termina con":
+                                    consulta += "Marca like '%" + filtro + "'";
+                                    break;
+                                case "Contiene":
+                                    consulta += "Marca like '%" + filtro + "%'";
+                                    break;
+                            }
+                            break;
+                        }
+                    case "Categoria":
+                        {
+                            switch (criterio) 
+                            {
+                                case "Empieza con":
+                                    consulta += "Categoria like '" + filtro + "%'";
+                                    break;
+                                case "Termina con":
+                                    consulta += "Categoria like '%" + filtro + "'";
+                                    break;
+                                case "Contiene":
+                                    consulta += "Categoria like '%" + filtro + "%'";
+                                    break;
+                            }
+                            break;
+                        }
+                }
+                datos.setearConsulta(consulta);
+                datos.ejecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    Articulo aux = new Articulo();
+                    aux.Id = (int)datos.Lector["Id"];
+                    aux.Codigo = (string)datos.Lector["Codigo"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.Descripcion = (string)datos.Lector["Descripcion"];
+                    if (!(datos.Lector["ImagenUrl"] is DBNull))
+                    {
+                        aux.UrlImagen = (string)datos.Lector["ImagenUrl"];
+                    }
+                    aux.Precio = (decimal)datos.Lector["Precio"];
+                    aux.Marca = new Marca();
+                    aux.Marca.Id = (int)datos.Lector["IdMarca"];
+                    aux.Marca.Descripcion = (string)datos.Lector["Marca"];
+                    aux.Categoria = new Categoria();
+                    aux.Categoria.Id = (int)datos.Lector["IdCategoria"];
+                    aux.Categoria.Descripcion = (string)datos.Lector["Categoria"];
+
+                    lista.Add(aux);
+                }
+
+                return lista;
             }
             catch (Exception ex)
             {

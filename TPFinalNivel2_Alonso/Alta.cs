@@ -9,12 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AccesoDB;
+using System.IO;
+using System.Configuration;
 
 namespace TPFinalNivel2_Alonso
 {
     public partial class Alta : Form
     {
-        private Articulo articulo = null; 
+        private Articulo articulo = null;
+        private OpenFileDialog archivo = null;
         public Alta()
         {
             InitializeComponent();
@@ -49,14 +52,16 @@ namespace TPFinalNivel2_Alonso
                 {
                     negocio.modificar(articulo);
                     MessageBox.Show("Articulo modificado.");
-                    Close();
                 }
                 else
                 {
                     negocio.agregar(articulo);
                     MessageBox.Show("Articulo agregado.");
-                    Close();
                 }
+                if (archivo != null && !(txtImagen.Text.ToUpper().Contains("HTTP")));
+                File.Copy(archivo.FileName, ConfigurationManager.AppSettings["imagen-folder"] + archivo.SafeFileName);
+
+                Close();
             }
             catch (Exception ex)
             {
@@ -111,6 +116,17 @@ namespace TPFinalNivel2_Alonso
             catch (Exception)
             {
                 pbxAlta.Load("https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg");
+            }
+        }
+
+        private void bttImagenLocal_Click(object sender, EventArgs e)
+        {
+            archivo = new OpenFileDialog();
+            archivo.Filter = "jpg|*.jpg|png|*.png";
+            if(archivo.ShowDialog() == DialogResult.OK)
+            {
+                txtImagen.Text = archivo.FileName;
+                cargarImagen(archivo.FileName);
             }
         }
     }

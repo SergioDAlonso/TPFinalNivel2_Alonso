@@ -146,7 +146,7 @@ namespace AccesoDB
             
             try
             {
-                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion Descripcion, ImagenUrl, Precio, M.Descripcion Marca, C.Descripcion Categoria, A.IdMarca, A.IdCategoria from ARTICULOS A, MARCAS M, CATEGORIAS C where M.Id = IdMarca AND C.Id = IdCategoria AND ";
+                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion Descripcion, ImagenUrl, Precio, M.Descripcion Marca, C.Descripcion Categoria, A.IdMarca, A.IdCategoria from ARTICULOS A, MARCAS M, CATEGORIAS C where M.Id = IdMarca And C.Id = IdCategoria And ";
                 switch (campo)
                 {
                     case "Precio":
@@ -159,9 +159,9 @@ namespace AccesoDB
                                 case "Menor a":
                                     consulta += "Precio < " + filtro;
                                     break;
-                                case "Igual a":
+                                default:
                                     consulta += "Precio = " + filtro;
-                                    break; ;
+                                    break;
                             }
                             break;
                         }
@@ -170,13 +170,13 @@ namespace AccesoDB
                             switch (criterio)
                             {
                                 case "Empieza con":
-                                    consulta += "Marca like '" + filtro + "%'";
+                                    consulta += "M.Descripcion like '" + filtro + "%'";
                                     break;
                                 case "Termina con":
-                                    consulta += "Marca like '%" + filtro + "'";
+                                    consulta += "M.Descripcion like '%" + filtro + "'";
                                     break;
-                                case "Contiene":
-                                    consulta += "Marca like '%" + filtro + "%'";
+                                default:
+                                    consulta += "M.Descripcion like '%" + filtro + "%'";
                                     break;
                             }
                             break;
@@ -186,13 +186,13 @@ namespace AccesoDB
                             switch (criterio) 
                             {
                                 case "Empieza con":
-                                    consulta += "Categoria like '" + filtro + "%'";
+                                    consulta += "C.Descripcion like '" + filtro + "%'";
                                     break;
                                 case "Termina con":
-                                    consulta += "Categoria like '%" + filtro + "'";
+                                    consulta += "C.Descripcion like '%" + filtro + "'";
                                     break;
-                                case "Contiene":
-                                    consulta += "Categoria like '%" + filtro + "%'";
+                                default:
+                                    consulta += "C.Descripcion like '%" + filtro + "%'";
                                     break;
                             }
                             break;

@@ -38,7 +38,12 @@ namespace TPFinalNivel2_Alonso
             ArticuloNegocio negocio = new ArticuloNegocio();
             try
             {
-                if(articulo == null)
+                if (!(datosRequeridos()))
+                {
+                    MessageBox.Show("Complete los campos requeridos.");
+                    return;
+                }
+                if (articulo == null)
                     articulo = new Articulo();
                 articulo.Codigo = txtCodigo.Text;
                 articulo.Nombre = txtNombre.Text;
@@ -47,7 +52,7 @@ namespace TPFinalNivel2_Alonso
                 articulo.Categoria = (Categoria)cbxCategoria.SelectedItem;
                 articulo.UrlImagen = txtImagen.Text;
                 articulo.Precio = numPrecio.Value;
-
+                
                 if(articulo.Id != 0)
                 {
                     negocio.modificar(articulo);
@@ -74,6 +79,7 @@ namespace TPFinalNivel2_Alonso
         {
             MarcaNegocio marcaNegocio = new MarcaNegocio();
             CategoriaNegocio categoriaNegocio = new CategoriaNegocio();
+            pbxAlta.Load("https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg");
             try
             {
                 cbxMarca.DataSource = marcaNegocio.listar();
@@ -128,6 +134,39 @@ namespace TPFinalNivel2_Alonso
                 txtImagen.Text = archivo.FileName;
                 cargarImagen(archivo.FileName);
             }
+        }
+        private bool datosRequeridos()
+        {
+            int requeridos = 0;
+
+            if (txtCodigo.Text == "")
+                txtCodigo.BackColor = Color.Red;
+            else
+            {
+                txtCodigo.BackColor = System.Drawing.SystemColors.Control;
+                requeridos++;
+            }
+            if (txtNombre.Text == "")
+                txtNombre.BackColor = Color.Red;
+            else
+            {
+                txtNombre.BackColor = System.Drawing.SystemColors.Control;
+                requeridos++;
+            }
+            if (numPrecio.Value == 0)
+                numPrecio.BackColor = Color.Red;
+            else
+            {
+                numPrecio.BackColor = System.Drawing.SystemColors.Control;
+                requeridos++;
+            }
+            if (requeridos == 3)
+                return true;
+            else
+            {
+                return false;
+            }
+                            
         }
     }
 }

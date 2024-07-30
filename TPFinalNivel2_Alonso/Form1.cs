@@ -94,6 +94,8 @@ namespace TPFinalNivel2_Alonso
 
         private void bttModificar_Click(object sender, EventArgs e)
         {
+            if (validarBoton())
+                return;
             Articulo seleccionado;
             seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
             Alta Modificar = new Alta(seleccionado);
@@ -103,11 +105,15 @@ namespace TPFinalNivel2_Alonso
 
         private void bttEliFis_Click(object sender, EventArgs e)
         {
+            if (validarBoton())
+                return;
             eliminar();
         }
 
         private void bttEliLog_Click(object sender, EventArgs e)
         {
+            if (validarBoton())
+                return;
             eliminar(true);
         }
         private void eliminar (bool logico = false)
@@ -168,7 +174,7 @@ namespace TPFinalNivel2_Alonso
             {
                 cbxCriterio.Items.Clear();
                 cbxCriterio.Items.Add("Mayor a");
-                cbxCriterio.Items.Add("Menos a");
+                cbxCriterio.Items.Add("Menor a");
                 cbxCriterio.Items.Add("Igual a");
 
             }
@@ -180,22 +186,68 @@ namespace TPFinalNivel2_Alonso
                 cbxCriterio.Items.Add("Contiene");
             }
         }
-
+        private bool soloNumeros(string cadena)
+        {
+            foreach (char caracter in cadena)
+            {
+                if (!(char.IsNumber(caracter)))
+                    return false;
+            }
+            return true;
+        }
+        private bool validarFiltro()
+        {
+            if (cbxCampo.SelectedIndex == -1)
+            {
+                MessageBox.Show("Seleccione un campo");
+                return true;
+            }
+            if (cbxCriterio.SelectedIndex == -1)
+            {
+                MessageBox.Show("Seleccione un criterio");
+                return true;
+            }
+            if (cbxCampo.SelectedItem.ToString() == "Precio")
+            {
+                if (string.IsNullOrEmpty(txtFiltroAvanz.Text))
+                {
+                    MessageBox.Show("Coloque en la caja 'FiltroAvanzado' el valor numerico buscado.");
+                        return true;
+                }
+                if (!(soloNumeros(txtFiltroAvanz.Text)))
+                {
+                    MessageBox.Show("Solo Numeros");
+                    return true;
+                }
+            }
+            return false;
+        }
         private void bttBuscar_Click(object sender, EventArgs e)
         {
             ArticuloNegocio negocio = new ArticuloNegocio();
             try
             {
+                if (validarFiltro())
+                    return;
                 string campo = cbxCampo.SelectedItem.ToString();
-                string criterio = cbxCampo.SelectedItem.ToString();
+                string criterio = cbxCriterio.SelectedItem.ToString();
                 string filtro = txtFiltroAvanz.Text;
                 dgvArticulos.DataSource = negocio.filtrar(campo, criterio, filtro);
             }
             catch (Exception ex)
             {
-
+                //throw ex;
                 MessageBox.Show(ex.ToString());
             }
+        }
+        private bool validarBoton()
+        {
+            if (dgvArticulos.CurrentRow == null)
+            {
+                MessageBox.Show("Seleccione un elemento");
+                return true;
+            }
+            return false;
         }
     }
 }
